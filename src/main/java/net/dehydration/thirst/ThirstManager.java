@@ -16,12 +16,17 @@ import net.minecraft.world.Difficulty;
 public class ThirstManager {
 
     // Damage Type
+
     public static final RegistryKey<DamageType> THIRST = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("dehydration", "thirst"));
+
+    // Properties
 
     public float dehydration;
     private boolean hasThirst = true;
     private int dehydrationTimer;
     private int thirstLevel = 20;
+
+    // Modifications
 
     public void add(int thirst) {
         this.thirstLevel = Math.min(thirst + this.thirstLevel, 20);
@@ -29,33 +34,41 @@ public class ThirstManager {
 
     public void update(PlayerEntity player) {
         Difficulty difficulty = player.getWorld().getDifficulty();
+        
         if (this.dehydration > 4.0F) {
             this.dehydration -= 4.0F;
             if (difficulty != Difficulty.PEACEFUL) {
                 this.thirstLevel = Math.max(this.thirstLevel - 1, 0);
             }
         }
+
         if (this.thirstLevel <= 0) {
             ++this.dehydrationTimer;
+            
             if (this.dehydrationTimer >= 90) {
                 if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || (player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL)) {
                     player.damage(createDamageSource(player), ConfigInit.CONFIG.thirst_damage);
                 }
+
                 this.dehydrationTimer = 0;
             }
         } else {
             this.dehydrationTimer = 0;
         }
+        
         if (!player.isCreative() && ConfigInit.CONFIG.special_effects) {
             if (thirstLevel == 2 && !player.hasStatusEffect(StatusEffects.HASTE)) {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, 409, 0, false, false, false));
             }
+
             if (thirstLevel == 0 && player.getHungerManager().getFoodLevel() == 0 && !player.hasStatusEffect(StatusEffects.MINING_FATIGUE)) {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 409, 2, false, false, false));
             }
         }
 
     }
+
+    // NBT
 
     public void readNbt(NbtCompound tag) {
         if (tag.contains("ThirstLevel", 99)) {
@@ -72,6 +85,8 @@ public class ThirstManager {
         tag.putFloat("ThirstExhaustionLevel", this.dehydration);
         tag.putBoolean("HasThirst", this.hasThirst);
     }
+
+    // Accessors
 
     public int getThirstLevel() {
         return this.thirstLevel;
