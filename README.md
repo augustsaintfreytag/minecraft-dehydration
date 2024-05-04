@@ -1,5 +1,5 @@
 # Dehydration
-Dehydration is an thirst mod.
+Dehydration is a mod introducing water and thirst mechanics to Minecraft. This project has been forked from the original mod by Globox (Globox1997/Dehydration).
 
 ### Installation
 Dehydration is a mod built for the [Fabric Loader](https://fabricmc.net/). It requires [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) and [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) to be installed separately; all other dependencies are installed with the mod.
