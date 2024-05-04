@@ -46,7 +46,7 @@ public class ThirstManager {
             ++this.dehydrationTimer;
             
             if (this.dehydrationTimer >= 90) {
-                if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || (player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL)) {
+                if (ConfigInit.CONFIG.thirst_damage > 0 && player.getHealth() > 10.0F || difficulty == Difficulty.HARD || (player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL)) {
                     player.damage(createDamageSource(player), ConfigInit.CONFIG.thirst_damage);
                 }
 
