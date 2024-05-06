@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.At;
 
+import net.dehydration.init.ConfigInit;
 import net.dehydration.access.ThirstManagerAccess;
 import net.dehydration.network.ThirstServerPacket;
 import net.minecraft.network.ClientConnection;
@@ -23,13 +24,26 @@ public class PlayerManagerMixin {
 
     @Inject(method = "onPlayerConnect", at = @At(value = "TAIL"))
     private void onPlayerConnectMixin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo info) {
-        ThirstServerPacket.writeS2CExcludedSyncPacket(player, ((ThirstManagerAccess) player).getThirstManager().hasThirst());
+        var thirstManager = ((ThirstManagerAccess) player).getThirstManager();
+
+        ThirstServerPacket.writeS2CExcludedSyncPacket(player, thirstManager.hasThirst());
         ThirstServerPacket.writeS2CHydrationTemplateSyncPacket(player);
     }
 
     @Inject(method = "respawnPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;onPlayerRespawned(Lnet/minecraft/server/network/ServerPlayerEntity;)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void respawnPlayerMixin(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> info, BlockPos blockPos, float f, boolean bl, ServerWorld serverWorld,
+    private void respawnPlayerMixinAtInvoke(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> info, BlockPos blockPos, float f, boolean bl, ServerWorld serverWorld,
             Optional<Vec3d> optional2, ServerWorld serverWorld2, ServerPlayerEntity serverPlayerEntity) {
-        ThirstServerPacket.writeS2CExcludedSyncPacket(serverPlayerEntity, ((ThirstManagerAccess) player).getThirstManager().hasThirst());
+        var thirstManager = ((ThirstManagerAccess) player).getThirstManager();
+        ThirstServerPacket.writeS2CExcludedSyncPacket(serverPlayerEntity, thirstManager.hasThirst());
+    }
+
+    @Inject(method = "respawnPlayer", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT)
+    private void respawnPlayerMixinAtReturn(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> info) {
+        var serverPlayerEntity = info.getReturnValue();
+        var thirstManager = ((ThirstManagerAccess) serverPlayerEntity).getThirstManager();
+        var defaultThirst = ConfigInit.CONFIG.respawn_hydration;
+
+        thirstManager.setThirstLevel(defaultThirst);
+        ThirstServerPacket.writeS2CHydrationTemplateSyncPacket(player);
     }
 }

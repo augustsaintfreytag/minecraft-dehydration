@@ -41,6 +41,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
         }
         if (compatSync > 0) {
             compatSync--;
+            
             if (compatSync == 1) {
                 ThirstServerPacket.writeS2CExcludedSyncPacket((ServerPlayerEntity) (Object) this, thirstManager.hasThirst());
             }
