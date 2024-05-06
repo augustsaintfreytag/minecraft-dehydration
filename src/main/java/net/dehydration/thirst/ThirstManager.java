@@ -29,7 +29,7 @@ public class ThirstManager {
     // Modifications
 
     public void add(int thirst) {
-        this.thirstLevel = Math.min(thirst + this.thirstLevel, 20);
+        this.thirstLevel = Math.max(0, Math.min(thirst + this.thirstLevel, 20));
     }
 
     public void update(PlayerEntity player) {
