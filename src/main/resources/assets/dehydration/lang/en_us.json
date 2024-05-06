@@ -21,6 +21,7 @@
   "text.autoconfig.dehydration.option.water_souce_quench": "Water Source Block Quench",
   "text.autoconfig.dehydration.option.water_bowl_quench": "Water Bowl Quench",
   "text.autoconfig.dehydration.option.hydrating_factor": "Hydrating Factor",
+  "text.autoconfig.dehydration.option.respawn_hydration": "Respawn Hydration",
   "text.autoconfig.dehydration.option.sleep_thirst_consumption": "Sleeping Thirst Consumption",
   "text.autoconfig.dehydration.option.sleep_hunger_consumption": "Sleeping Hunger Consumption",
   "text.autoconfig.dehydration.option.potion_bad_thirst_chance": "Bad Potion Thirst Debuff Chance",
