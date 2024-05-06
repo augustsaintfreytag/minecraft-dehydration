@@ -25,18 +25,50 @@ public class ThirstTooltipComponent implements TooltipComponent {
 
     @Override
     public int getWidth(TextRenderer textRenderer) {
+        if (this.thirstQuench > 20) {
+            return 18 + textRenderer.getWidth("x10") * 3 / 4;
+        }
+
         return this.thirstQuench * 9 / 2 + (this.thirstQuench % 2 != 0 ? 9 : 0);
     }
 
     @Override
     public void drawItems(TextRenderer textRenderer, int x, int y, DrawContext context) {
-        for (int i = 0; i < this.thirstQuench / 2; i++) {
-            context.drawTexture(RenderInit.THIRST_ICON, x + i * 9 - 1, y, 0, 0, 9, 9, 256, 256); // Background
-            context.drawTexture(RenderInit.THIRST_ICON, x + i * 9 - 1, y, this.quality * 18, 9, 9, 9, 256, 256);
+        var matrixStack = context.getMatrices();
+        var thirstQuench = this.thirstQuench;
+
+        if (thirstQuench > 20) {
+            // Draw only single full thirst element.
+            context.drawTexture(RenderInit.THIRST_ICON, x, y, 0, 0, 9, 9, 256, 256); // Background
+            context.drawTexture(RenderInit.THIRST_ICON, x, y, this.quality * 18, 9, 9, 9, 256, 256);
+
+            // Draw "x10" multiplier indicator after element.
+            var thirstQuenchValue = (int) Math.ceil(Math.abs(thirstQuench) / 2f);
+            var thirstQuenchText = "x" + thirstQuenchValue;
+
+            matrixStack.push();
+			matrixStack.translate(x + 9, y, 0);
+			matrixStack.scale(0.75f, 0.75f, 0.75f);
+
+			context.drawTextWithShadow(textRenderer, thirstQuenchText, 1, 3, 0xFFAAAAAA);
+			
+            matrixStack.pop();
+            return;
         }
-        if (this.thirstQuench % 2 != 0) {
-            context.drawTexture(RenderInit.THIRST_ICON, x + this.thirstQuench / 2 * 9 - 1, y, 0, 0, 9, 9, 256, 256); // Background
-            context.drawTexture(RenderInit.THIRST_ICON, x + this.thirstQuench / 2 * 9 - 1, y, this.quality * 18 + 9, 9, 9, 9, 256, 256);
+
+        // Draw full thirst elements
+        for (int i = 0; i < thirstQuench / 2; i++) {
+            var elementX = x + i * 9 - 1;
+            var elementY = y;
+
+            context.drawTexture(RenderInit.THIRST_ICON, elementX, elementY, 0, 0, 9, 9, 256, 256); // Background
+            context.drawTexture(RenderInit.THIRST_ICON, elementX, elementY, this.quality * 18, 9, 9, 9, 256, 256);
+        }
+
+        // Draw single half thirst element
+        if (thirstQuench % 2 != 0) {
+            context.drawTexture(RenderInit.THIRST_ICON, x + thirstQuench / 2 * 9 - 1, y, 0, 0, 9, 9, 256, 256); // Background
+            context.drawTexture(RenderInit.THIRST_ICON, x + thirstQuench / 2 * 9 - 1, y, this.quality * 18 + 9, 9, 9, 9, 256, 256);
         }
     }
 
