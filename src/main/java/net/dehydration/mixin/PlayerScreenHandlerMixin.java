@@ -22,7 +22,7 @@ public class PlayerScreenHandlerMixin {
         if (player instanceof ServerPlayerEntity && slot2 instanceof CraftingResultSlot) {
             if (itemStack2.getItem() instanceof LeatherFlask && !itemStack2.hasNbt()) {
                 NbtCompound tags = new NbtCompound();
-                tags.putInt("leather_flask", 0);
+                tags.putInt(LeatherFlask.TAG_WATER, 0);
                 itemStack2.setNbt(tags);
             }
         }
