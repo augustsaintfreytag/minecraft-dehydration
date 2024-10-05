@@ -32,10 +32,10 @@ public class ItemInit {
     public static final List<Item> FLASK_ITEM_LIST = new ArrayList<Item>();
     // Flasks
     public static final Item LEATHER_FLASK = register("leather_flask", new LeatherFlask(0, new Item.Settings().maxCount(1)));
-    public static final Item IRON_LEATHER_FLASK = register("iron_leather_flask", new LeatherFlask(1, new Item.Settings().maxCount(1)));
-    public static final Item GOLDEN_LEATHER_FLASK = register("golden_leather_flask", new LeatherFlask(2, new Item.Settings().maxCount(1)));
-    public static final Item DIAMOND_LEATHER_FLASK = register("diamond_leather_flask", new LeatherFlask(3, new Item.Settings().maxCount(1)));
-    public static final Item NETHERITE_LEATHER_FLASK = register("netherite_leather_flask", new LeatherFlask(4, new Item.Settings().maxCount(1).fireproof()));
+    public static final Item IRON_LEATHER_FLASK = register("iron_leather_flask", new LeatherFlask(2, new Item.Settings().maxCount(1)));
+    public static final Item GOLDEN_LEATHER_FLASK = register("golden_leather_flask", new LeatherFlask(4, new Item.Settings().maxCount(1)));
+    public static final Item DIAMOND_LEATHER_FLASK = register("diamond_leather_flask", new LeatherFlask(6, new Item.Settings().maxCount(1)));
+    public static final Item NETHERITE_LEATHER_FLASK = register("netherite_leather_flask", new LeatherFlask(8, new Item.Settings().maxCount(1).fireproof()));
     // Potion
     public static final Potion PURIFIED_WATER = new Potion(new StatusEffectInstance[0]);
     public static final Potion HYDRATION = new Potion(new StatusEffectInstance(EffectInit.HYDRATION, 900));
