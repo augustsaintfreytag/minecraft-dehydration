@@ -96,15 +96,15 @@ public interface CopperCauldronBehavior {
                     NbtCompound nbt;
                     if (stack.hasNbt()) {
                         nbt = stack.getNbt();
-                        nbt.putInt("leather_flask", nbt.getInt("leather_flask") - 1);
+                        nbt.putInt(LeatherFlask.TAG_WATER, nbt.getInt(LeatherFlask.TAG_WATER) - 1);
                     } else {
                         nbt = new NbtCompound();
-                        nbt.putInt("leather_flask", 1 + ((LeatherFlask) item).addition);
-                        nbt.putInt("purified_water", 0);
+                        nbt.putInt(LeatherFlask.TAG_WATER, 1 + ((LeatherFlask) item).maxFillLevel);
+                        nbt.putInt(LeatherFlask.TAG_WATER_KIND, 0);
 
                     }
                     stack.setNbt(nbt);
-                    if (nbt.getInt("purified_water") == 0)
+                    if (nbt.getInt(LeatherFlask.TAG_WATER_KIND) == 0)
                         world.setBlockState(pos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState());
                     else
                         world.setBlockState(pos, BlockInit.COPPER_WATER_CAULDRON_BLOCK.getDefaultState());
@@ -205,8 +205,8 @@ public interface CopperCauldronBehavior {
                     NbtCompound nbt;
                     if (!stack.hasNbt()) {
                         nbt = new NbtCompound();
-                        nbt.putInt("leather_flask", 2 + ((LeatherFlask) item).addition);
-                        nbt.putInt("purified_water", 0);
+                        nbt.putInt(LeatherFlask.TAG_WATER, 2 + ((LeatherFlask) item).maxFillLevel);
+                        nbt.putInt(LeatherFlask.TAG_WATER_KIND, 0);
                     } else
                         nbt = stack.getNbt();
                     stack.setNbt(nbt);
@@ -215,8 +215,8 @@ public interface CopperCauldronBehavior {
                     if (playerIsSneaking) {
                         if (!LeatherFlask.isFlaskEmpty(stack))
                             if (!((CopperLeveledCauldronBlock) state.getBlock()).isFull(state)) {
-                                nbt.putInt("leather_flask", nbt.getInt("leather_flask") - 1);
-                                if (nbt.getInt("purified_water") == 0)
+                                nbt.putInt(LeatherFlask.TAG_WATER, nbt.getInt(LeatherFlask.TAG_WATER) - 1);
+                                if (nbt.getInt(LeatherFlask.TAG_WATER_KIND) == 0)
                                     world.setBlockState(pos, (BlockState) state.cycle(CopperLeveledCauldronBlock.LEVEL));
                                 else
                                     world.setBlockState(pos,
@@ -228,9 +228,9 @@ public interface CopperCauldronBehavior {
                     } else {
                         // Fill flask
                         if (!LeatherFlask.isFlaskFull(stack)) {
-                            nbt.putInt("leather_flask", nbt.getInt("leather_flask") + 1);
-                            if (nbt.getInt("purified_water") != 0)
-                                nbt.putInt("purified_water", 1);
+                            nbt.putInt(LeatherFlask.TAG_WATER, nbt.getInt(LeatherFlask.TAG_WATER) + 1);
+                            if (nbt.getInt(LeatherFlask.TAG_WATER_KIND) != 0)
+                                nbt.putInt(LeatherFlask.TAG_WATER_KIND, 1);
 
                             CopperLeveledCauldronBlock.decrementFluidLevel(state, world, pos);
                             world.playSound((PlayerEntity) null, pos, SoundInit.FILL_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);

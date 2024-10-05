@@ -51,6 +51,8 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     private static final VoxelShape X_BASE_SHAPE;
     private static final VoxelShape CAULDRON_SHAPE;
 
+    private static final int MAX_LEVEL = 4;
+
     public CampfireCauldronBlock(AbstractBlock.Settings settings) {
         super(settings);
         this.setDefaultState((BlockState) ((BlockState) this.stateManager.getDefaultState()).with(LEVEL, 0));
@@ -102,18 +104,18 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
             int i = (Integer) state.get(LEVEL);
             Item item = itemStack.getItem();
             if (item == Items.WATER_BUCKET) {
-                if (i < 4 && !world.isClient()) {
+                if (i < MAX_LEVEL && !world.isClient()) {
                     if (!player.isCreative()) {
                         player.setStackInHand(hand, new ItemStack(Items.BUCKET));
                     }
                     campfireCauldronEntity.onFillingCauldron();
-                    this.setLevel(world, pos, state, 4);
+                    this.setLevel(world, pos, state, MAX_LEVEL);
                     world.playSound((PlayerEntity) null, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 }
                 return ActionResult.success(world.isClient());
 
             } else if (item == Items.BUCKET) {
-                if (i == 4 && !world.isClient()) {
+                if (i == MAX_LEVEL && !world.isClient()) {
                     if (!player.isCreative()) {
                         itemStack.decrement(1);
                         if (itemStack.isEmpty()) {
@@ -151,7 +153,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
                     return ActionResult.success(world.isClient());
 
                 } else if (item == Items.POTION && (PotionUtil.getPotion(itemStack) == Potions.WATER || PotionUtil.getPotion(itemStack) == ItemInit.PURIFIED_WATER)) {
-                    if (i < 4 && !world.isClient()) {
+                    if (i < MAX_LEVEL && !world.isClient()) {
                         if (!player.isCreative()) {
                             newItemStack = new ItemStack(Items.GLASS_BOTTLE);
                             player.setStackInHand(hand, newItemStack);
@@ -167,17 +169,17 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
                 } else {
                     if (i > 0 && item instanceof LeatherFlask) {
                         NbtCompound tags = itemStack.getNbt();
-                        if (tags != null && tags.getInt("leather_flask") < 2 + ((LeatherFlask) item).addition) {
+                        if (tags != null && tags.getInt(LeatherFlask.TAG_WATER) < 2 + ((LeatherFlask) item).maxFillLevel) {
                             if (this.isPurifiedWater(world, pos)) {
-                                if ((tags.getInt("purified_water") == 0 || tags.getInt("leather_flask") == 0)) {
-                                    tags.putInt("purified_water", 0);
+                                if ((tags.getInt(LeatherFlask.TAG_WATER_KIND) == 0 || tags.getInt(LeatherFlask.TAG_WATER) == 0)) {
+                                    tags.putInt(LeatherFlask.TAG_WATER_KIND, 0);
                                 } else {
-                                    tags.putInt("purified_water", 1);
+                                    tags.putInt(LeatherFlask.TAG_WATER_KIND, 1);
                                 }
                             } else {
-                                tags.putInt("purified_water", 2);
+                                tags.putInt(LeatherFlask.TAG_WATER_KIND, 2);
                             }
-                            tags.putInt("leather_flask", tags.getInt("leather_flask") + 1);
+                            tags.putInt(LeatherFlask.TAG_WATER, tags.getInt(LeatherFlask.TAG_WATER) + 1);
                             this.setLevel(world, pos, state, i - 1);
                             world.playSound((PlayerEntity) null, pos, SoundInit.FILL_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                             return ActionResult.success(world.isClient());
@@ -193,14 +195,14 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     }
 
     public void setLevel(World world, BlockPos pos, BlockState state, int level) {
-        world.setBlockState(pos, (BlockState) state.with(LEVEL, MathHelper.clamp(level, 0, 4)), 2);
+        world.setBlockState(pos, (BlockState) state.with(LEVEL, MathHelper.clamp(level, 0, MAX_LEVEL)), 2);
         world.updateComparators(pos, this);
     }
 
     @Override
     public void precipitationTick(BlockState state, World world, BlockPos pos, Biome.Precipitation precipitation) {
         if (world.getRandom().nextFloat() < 0.2f && world.isSkyVisible(pos) && world.getBiome(pos).value().getTemperature() >= 0.15F && world.getBiome(pos).value().getTemperature() < 2F) {
-            if (precipitation == Biome.Precipitation.RAIN && state.get(LEVEL) < 4) {
+            if (precipitation == Biome.Precipitation.RAIN && state.get(LEVEL) < MAX_LEVEL) {
                 this.setLevel(world, pos, state, state.get(LEVEL) + 1);
                 world.emitGameEvent((Entity) null, GameEvent.FLUID_PLACE, pos);
             }
@@ -238,7 +240,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     }
 
     public boolean isFull(BlockState state) {
-        return (Integer) state.get(LEVEL) == 4;
+        return (Integer) state.get(LEVEL) == MAX_LEVEL;
     }
 
     public boolean isFireBurning(World world, BlockPos pos) {
@@ -263,7 +265,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     }
 
     static {
-        LEVEL = IntProperty.of("level", 0, 4);
+        LEVEL = IntProperty.of("level", 0, MAX_LEVEL);
         FACING = HorizontalFacingBlock.FACING;
         CAULDRON_SHAPE = VoxelShapes.union(createCuboidShape(11, 1, 4, 12, 6, 5), createCuboidShape(4, 0, 4, 12, 1, 12), createCuboidShape(3, 1, 4, 4, 6, 12), createCuboidShape(12, 1, 4, 13, 6, 12),
                 createCuboidShape(4, 1, 12, 12, 6, 13), createCuboidShape(4, 1, 3, 12, 6, 4), createCuboidShape(4, 1, 4, 5, 6, 5), createCuboidShape(11, 1, 11, 12, 6, 12),
