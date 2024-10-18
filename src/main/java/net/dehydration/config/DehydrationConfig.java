@@ -128,4 +128,7 @@ public class DehydrationConfig implements ConfigData {
 
     @ConfigEntry.Category("advanced_settings")
     public boolean thirst_preview = true;
+
+    @ConfigEntry.Category("advanced_settings")
+    public boolean tooltip_thirst = true;
 }
