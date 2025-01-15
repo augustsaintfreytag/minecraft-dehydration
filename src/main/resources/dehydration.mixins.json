@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "plugin": "net.dehydration.mixin.compat.DehydrationMixinPlugin",
   "mixins": [
+	"compat.autohud.AutoHudDehydrationCompatMixin",
 	"MilkBucketItemMixin",
     "accessor.CampfireBlockEntityAccessor",
     "BootstrapMixin",
