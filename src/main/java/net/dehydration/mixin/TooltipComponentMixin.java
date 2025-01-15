@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.dehydration.init.ConfigInit;
 import net.dehydration.misc.DummyTooltipComponent;
 import net.dehydration.misc.ThirstTooltipComponent;
 import net.dehydration.misc.ThirstTooltipData;
+import net.dehydration.mod.ModConfig;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 
@@ -18,7 +18,7 @@ public interface TooltipComponentMixin {
 	@Inject(method = "Lnet/minecraft/client/gui/tooltip/TooltipComponent;of(Lnet/minecraft/client/item/TooltipData;)Lnet/minecraft/client/gui/tooltip/TooltipComponent;", at = @At("HEAD"), cancellable = true)
 	private static void ofMixin(TooltipData data, CallbackInfoReturnable<TooltipComponent> info) {
 		if (data instanceof ThirstTooltipData) {
-			if (!ConfigInit.CONFIG.tooltip_thirst) {
+			if (!ModConfig.CONFIG.renderHydrationValueInItemTooltip) {
 				info.setReturnValue(new DummyTooltipComponent());
 				return;
 			}

@@ -1,13 +1,13 @@
 package net.dehydration.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import org.spongepowered.asm.mixin.injection.At;
 
-import net.dehydration.init.ItemInit;
 import net.dehydration.mixin.accessor.CampfireBlockEntityAccessor;
+import net.dehydration.mod.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.CampfireBlockEntity;
@@ -24,14 +24,16 @@ import net.minecraft.world.World;
 @Mixin(CampfireBlockEntity.class)
 public class CampfireBlockEntityMixin {
 
-    @Inject(method = "litServerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ItemScatterer;spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-    private static void litServerTickMixin(World world, BlockPos pos, BlockState state, CampfireBlockEntity campfire, CallbackInfo info, boolean bl, int i, ItemStack itemStack, Inventory inventory,
-            ItemStack itemStack2) {
-        if (itemStack2.getItem() instanceof PotionItem && PotionUtil.getPotion(itemStack2) == Potions.WATER) {
-            ItemScatterer.spawn(world, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), PotionUtil.setPotion(new ItemStack(Items.POTION), ItemInit.PURIFIED_WATER));
-            ((CampfireBlockEntityAccessor) campfire).getItemsBeingCooked().set(i, ItemStack.EMPTY);
-            world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
-            info.cancel();
-        }
-    }
+	@Inject(method = "litServerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ItemScatterer;spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
+	private static void litServerTickMixin(World world, BlockPos pos, BlockState state, CampfireBlockEntity campfire,
+			CallbackInfo info, boolean bl, int i, ItemStack itemStack, Inventory inventory,
+			ItemStack itemStack2) {
+		if (itemStack2.getItem() instanceof PotionItem && PotionUtil.getPotion(itemStack2) == Potions.WATER) {
+			ItemScatterer.spawn(world, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(),
+					PotionUtil.setPotion(new ItemStack(Items.POTION), ModItems.PURIFIED_WATER));
+			((CampfireBlockEntityAccessor) campfire).getItemsBeingCooked().set(i, ItemStack.EMPTY);
+			world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+			info.cancel();
+		}
+	}
 }

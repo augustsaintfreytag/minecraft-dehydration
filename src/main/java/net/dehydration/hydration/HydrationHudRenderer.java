@@ -1,13 +1,13 @@
-package net.dehydration.thirst;
+package net.dehydration.hydration;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.dehydration.access.HudAccess;
-import net.dehydration.access.ThirstManagerAccess;
-import net.dehydration.init.ConfigInit;
-import net.dehydration.init.EffectInit;
-import net.dehydration.init.RenderInit;
+import net.dehydration.access.HydrationManagerAccess;
 import net.dehydration.misc.ThirstTooltipData;
+import net.dehydration.mod.ModConfig;
+import net.dehydration.mod.ModEffects;
+import net.dehydration.mod.ModRendering;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -17,16 +17,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
-public class ThirstHudRender {
+public class HydrationHudRenderer {
 
 	// Could implement HudRenderCallback
 	public static void renderThirstHud(DrawContext context, MinecraftClient client, PlayerEntity playerEntity,
 			int scaledWidth, int scaledHeight, int ticks, int vehicleHeartCount, float flashAlpha,
 			float otherFlashAlpha) {
 		if (playerEntity != null && !playerEntity.isInvulnerable()) {
-			ThirstManager thirstManager = ((ThirstManagerAccess) playerEntity).getThirstManager();
-			if (thirstManager.hasThirst()) {
-				int thirst = thirstManager.getThirstLevel();
+			HydrationManager hydrationManager = ((HydrationManagerAccess) playerEntity).getHydrationManager();
+			if (hydrationManager.hasThirst()) {
+				int thirst = hydrationManager.getHydrationLevel();
 				int dropletIndex;
 				int horizontalOffset;
 				int verticalOffset;
@@ -35,7 +35,7 @@ public class ThirstHudRender {
 				if (vehicleHeartCount == 0) {
 
 					ItemStack itemStack = null;
-					if (ConfigInit.CONFIG.thirst_preview && thirst < 20) {
+					if (ModConfig.CONFIG.previewHydrationWhenHoldingItem && thirst < 20) {
 						if (!playerEntity.getMainHandStack().isEmpty()
 								&& playerEntity.getMainHandStack().getTooltipData().isPresent()
 								&& playerEntity.getMainHandStack().getTooltipData()
@@ -60,39 +60,40 @@ public class ThirstHudRender {
 					for (dropletIndex = 0; dropletIndex < 10; ++dropletIndex) {
 						verticalOffset = height;
 
-						if (thirstManager.dehydration >= 4.0F && ticks % (thirst * 3 + 1) == 0) {
+						if (hydrationManager.dehydration >= 4.0F && ticks % (thirst * 3 + 1) == 0) {
 							verticalOffset = height + (playerEntity.getWorld().getRandom().nextInt(3) - 1); // bouncy
-							thirstManager.dehydration -= 4.0F;
+							hydrationManager.dehydration -= 4.0F;
 						} else if (ticks % (thirst * 8 + 3) == 0) {
 							verticalOffset = height + (playerEntity.getWorld().getRandom().nextInt(3) - 1); // bouncy
 						}
 
 						int uppderCoord = 9;
 
-						if (ConfigInit.CONFIG.other_droplet_texture) {
+						if (ModConfig.CONFIG.useAlternateHUDTextures) {
 							uppderCoord = uppderCoord + 9;
 						}
 
 						int beneathCoord = 0;
 
-						if (playerEntity.hasStatusEffect(EffectInit.THIRST)) {
+						if (playerEntity.hasStatusEffect(ModEffects.THIRST)) {
 							beneathCoord = 36;
 						}
 
 						horizontalOffset = width - dropletIndex * 8 - 9;
-						horizontalOffset = horizontalOffset + ConfigInit.CONFIG.hud_x;
-						verticalOffset = verticalOffset + ConfigInit.CONFIG.hud_y;
+						horizontalOffset = horizontalOffset + ModConfig.CONFIG.horizontalHUDOffset;
+						verticalOffset = verticalOffset + ModConfig.CONFIG.verticalHUDOffset;
 
-						context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset, 0, 0, 9, 9, 256,
+						context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset, 0, 0, 9, 9, 256,
 								256); // Background
 
 						if (dropletIndex * 2 + 1 < thirst) {
-							context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset, beneathCoord,
+							context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset,
+									beneathCoord,
 									uppderCoord, 9, 9, 256, 256); // Big icon
 						}
 
 						if (dropletIndex * 2 + 1 == thirst) {
-							context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset,
+							context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset,
 									beneathCoord + 9, uppderCoord, 9, 9, 256, 256); // Small icon
 						}
 
@@ -104,11 +105,11 @@ public class ThirstHudRender {
 							int quality = ((ThirstTooltipData) itemStack.getTooltipData().get()).getDrinkQuality();
 
 							if (dropletIndex < (thirst + thirstQuench) / 2) {
-								context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset,
+								context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset,
 										quality * 18, 9, 9, 9, 256, 256);
 							} else if ((thirst + thirstQuench) % 2 != 0
 									&& dropletIndex < (thirst + thirstQuench) / 2 + 1) {
-								context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset,
+								context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset,
 										quality * 18 + 9, 9, 9, 9, 256, 256);
 							}
 
@@ -122,12 +123,12 @@ public class ThirstHudRender {
 							RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, playerEntity.getFreezingScale());
 
 							if (dropletIndex * 2 + 1 < thirst) {
-								context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset, 54,
+								context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset, 54,
 										uppderCoord, 9, 9, 256, 256);
 							}
 
 							if (dropletIndex * 2 + 1 == thirst) {
-								context.drawTexture(RenderInit.THIRST_ICON, horizontalOffset, verticalOffset, 54 + 9,
+								context.drawTexture(ModRendering.THIRST_ICON, horizontalOffset, verticalOffset, 54 + 9,
 										uppderCoord, 9, 9, 256, 256);
 							}
 
