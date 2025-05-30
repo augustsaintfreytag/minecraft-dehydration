@@ -1,22 +1,23 @@
-# gradle
+# System
+
+.DS_Store
+Thumbs.db
+
+# Gradle
 
 .gradle/
 build/
 out/
 classes/
 
-# eclipse
-
-*.launch
-
-# idea
+# IDEA
 
 .idea/
 *.iml
 *.ipr
 *.iws
 
-# vscode
+# VS Code
 
 .settings/
 .vscode/
@@ -24,6 +25,6 @@ bin/
 .classpath
 .project
 
-# fabric
+# Fabric
 
 run/
