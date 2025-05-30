@@ -17,10 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.dehydration.DehydrationMain"
+      "net.dehydration.Mod"
     ],
     "client": [
-      "net.dehydration.DehydrationClient"
+      "net.dehydration.ModClient"
     ],
     "modmenu": [
       "net.dehydration.config.ModMenuIntegration"

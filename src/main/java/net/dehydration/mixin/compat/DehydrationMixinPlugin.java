@@ -11,39 +11,47 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public class DehydrationMixinPlugin implements IMixinConfigPlugin {
 
-    @Override
-    public void onLoad(String mixinPackage) {
-    }
+	@Override
+	public void onLoad(String mixinPackage) {
+	}
 
-    @Override
-    public String getRefMapperConfig() {
-        return null;
-    }
+	@Override
+	public String getRefMapperConfig() {
+		return null;
+	}
 
-    @Override
-    public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (!FabricLoader.getInstance().isModLoaded("origins")
-                && (mixinClassName.equals("net.dehydration.mixin.compat.OriginCommandMixin") || mixinClassName.equals("net.dehydration.mixin.compat.PlayerOriginComponentMixin")))
-            return false;
+	@Override
+	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+		// Disable Dehydration -> Origins compatibility if Origins is not loaded
+		if (!FabricLoader.getInstance().isModLoaded("origins")
+				&& (mixinClassName.equals("net.dehydration.mixin.compat.OriginCommandMixin")
+						|| mixinClassName.equals("net.dehydration.mixin.compat.PlayerOriginComponentMixin"))) {
+			return false;
+		}
 
-        return true;
-    }
+		// Disable AutoHUD -> Dehydration compatibility, handled Dehydration -> AutoHUD
+		if (mixinClassName.equals("mod.crend.autohud.compat.mixin.dehydration.ThirstManagerMixin")) {
+			return false;
+		}
 
-    @Override
-    public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
-    }
+		return true;
+	}
 
-    @Override
-    public List<String> getMixins() {
-        return null;
-    }
+	@Override
+	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
+	}
 
-    @Override
-    public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
+	@Override
+	public List<String> getMixins() {
+		return null;
+	}
 
-    @Override
-    public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
+	@Override
+	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+	}
+
+	@Override
+	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+	}
 
 }

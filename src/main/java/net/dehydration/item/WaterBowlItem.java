@@ -1,11 +1,7 @@
 package net.dehydration.item;
 
-import net.dehydration.DehydrationMain;
-import net.dehydration.access.ThirstManagerAccess;
-import net.dehydration.init.ConfigInit;
-import net.dehydration.init.EffectInit;
+import net.dehydration.hydration.HydrationUtil;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,54 +14,47 @@ import net.minecraft.world.World;
 
 public class WaterBowlItem extends Item {
 
-    private final boolean hasThirstChance;
+	public final boolean isContaminated;
 
-    public WaterBowlItem(Settings settings, boolean hasThirstChance) {
-        super(settings);
-        this.hasThirstChance = hasThirstChance;
-    }
+	public WaterBowlItem(Settings settings, boolean isContaminated) {
+		super(settings);
+		this.isContaminated = isContaminated;
+	}
 
-    @Override
-    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        ItemStack itemStack = super.finishUsing(stack, world, user);
+	@Override
+	public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+		ItemStack itemStack = super.finishUsing(stack, world, user);
 
-        if (user instanceof PlayerEntity) {
-            int thirstQuench = 0;
-            for (int i = 0; i < DehydrationMain.HYDRATION_TEMPLATES.size(); i++) {
-                if (DehydrationMain.HYDRATION_TEMPLATES.get(i).containsItem(stack.getItem())) {
-                    thirstQuench = DehydrationMain.HYDRATION_TEMPLATES.get(i).getHydration();
-                    break;
-                }
-            }
-            if (thirstQuench == 0) {
-                thirstQuench = ConfigInit.CONFIG.water_bowl_quench;
-            }
-            ((ThirstManagerAccess) user).getThirstManager().add(thirstQuench);
+		if (!(user instanceof PlayerEntity)) {
+			return itemStack;
+		}
 
-            if (!world.isClient() && this.hasThirstChance && world.random.nextFloat() >= ConfigInit.CONFIG.water_bowl_thirst_chance) {
-                user.addStatusEffect(new StatusEffectInstance(EffectInit.THIRST, ConfigInit.CONFIG.potion_bad_thirst_duration / 2, 0, false, false, true));
-            }
+		PlayerEntity player = (PlayerEntity) user;
 
-            if (((PlayerEntity) user).isCreative()) {
-                return itemStack;
-            }
-        }
-        return new ItemStack(Items.BOWL);
-    }
+		if (player.isCreative() || player.isSpectator()) {
+			return itemStack;
+		}
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 32;
-    }
+		if (!world.isClient() && this.isContaminated) {
+			HydrationUtil.addDefaultThirstEffectToPlayer(player);
+		}
 
-    @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.DRINK;
-    }
+		return new ItemStack(Items.BOWL);
+	}
 
-    @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        return ItemUsage.consumeHeldItem(world, user, hand);
-    }
+	@Override
+	public int getMaxUseTime(ItemStack stack) {
+		return 32;
+	}
+
+	@Override
+	public UseAction getUseAction(ItemStack stack) {
+		return UseAction.DRINK;
+	}
+
+	@Override
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+		return ItemUsage.consumeHeldItem(world, user, hand);
+	}
 
 }
