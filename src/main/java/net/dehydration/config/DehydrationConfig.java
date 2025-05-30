@@ -1,134 +1,155 @@
 package net.dehydration.config;
 
 import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 @Config(name = "dehydration")
 @Config.Gui.Background("minecraft:textures/block/stone.png")
 public class DehydrationConfig implements ConfigData {
 
-    @Comment("Defines the damage taken every 4 seconds")
-    public float thirst_damage = 0.5F;
+	// Player
 
-    @Comment("Defines speed of dehydration, bigger value = slower depletion")
-    public float hydrating_factor = 1.5F;
+	@ConfigEntry.Category("player_settings")
+	@Comment("Defines speed of dehydration per player exhaustion. Bigger value = slower depletion.")
+	public float dehydrationExhaustionRate = 0.85F;
 
-    @Comment("Defines the rate of the thirst effect's drain, smaller variable = less draining")
-    public float thirst_effect_factor = 0.05F;
+	@ConfigEntry.Category("player_settings")
+	@Comment("Defines the damage a player takes every 4 seconds when dying of thirst.")
+	public float dehydrationDepletionDamage = 0.5F;
 
-    @Comment("The amount of hydration a player respawns with")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int respawn_hydration = 10;
+	@ConfigEntry.Category("player_settings")
+	@Comment("Defines the amount of hydration a player respawns with after death.")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int hydrationOnRespawn = 10;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int potion_thirst_quench = 2;
+	@ConfigEntry.Category("player_settings")
+	@Comment("Defines if Haste and Fatique effects are applied when hydration is low.")
+	public boolean extraDehydrationEffects = true;
 
-    @Comment("1.0F = 100%, 0.5F = 50%, 0.0F = 0%")
-    public float potion_bad_thirst_chance = 0.25F;
+	@ConfigEntry.Category("player_settings")
+	@Comment("Defines if the player has increased rate of dehydration in hot dimensions.")
+	public boolean increasedDehydrationInHotBiomes = true;
 
-    @Comment("Counted in ticks, 20 ticks = 1 second")
-    public int potion_bad_thirst_duration = 300;
+	@ConfigEntry.Category("player_settings")
+	@Comment("Defines by how much dehydration rate increases in hot dimensions. 1.25 = 25% more thirst")
+	public float increasedDehydrationFactor = 1.25F;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int milk_thirst_quench = 8;
+	// Effects
 
-    @Comment("1.0F = 100%, 0.5F = 50%, 0.0F = 0%")
-    public float milk_thirst_chance = 0.4F;
+	@ConfigEntry.Category("effect_settings")
+	@Comment("Defines the intensity of a default applied thirst effect (e.g. from contaminated water). Smaller value = less drain.")
+	public float thirstEffectAmplitude = 0.1F;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int honey_quench = 1;
+	@ConfigEntry.Category("effect_settings")
+	@Comment("Defines the duration of a default applied thirst effect (e.g. from contaminated water) in ticks. 20 ticks = 1 second.")
+	public int thirstEffectDuration = 200;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int water_bowl_quench = 3;
+	// Source
 
-    @Comment("1.0F = 100%, 0.5F = 50%, 0.0F = 0%")
-    public float water_bowl_thirst_chance = 0.4F;
+	@ConfigEntry.Category("water_source_settings")
+	@Comment("Defines if water blocks should give a thirst effect")
+	public boolean waterBlocksAreContaminated = true;
 
-    @Comment("Applies on items added to the drinks tag")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int drinks_thirst_quench = 2;
+	@ConfigEntry.Category("water_source_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	@Comment("Defines the hydration value of a water source block or flowing water block.")
+	public int waterBlockHydrationValue = 10;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int stew_thirst_quench = 3;
+	@ConfigEntry.Category("water_source_settings")
+	@Comment("Defines if the player can drink flowing water instead of only still water blocks.")
+	public boolean allowDrinkingFlowingWaterBlocks = false;
 
-    @Comment("Applies to only food tagged with: #hydrating_food")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int food_thirst_quench = 1;
+	// Potions
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int stronger_drinks_thirst_quench = 4;
+	@ConfigEntry.Category("potion_settings")
+	@Comment("Defines if bad potions should give a thirst effect when consumed. Uses defined thirst effect chance.")
+	public boolean badPotionsAreContaminated = true;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int stronger_stew_thirst_quench = 6;
+	// Flask
 
-    @Comment("Applies to only food tagged with: #hydrating_food")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int stronger_food_thirst_quench = 2;
+	@ConfigEntry.Category("flask_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	@Comment("Defines the hydration value of one charge of a filled water flask.")
+	public int flaskHydrationValue = 12;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int flask_thirst_quench = 4;
+	// Food & Drinks
 
-    @Comment("1.0F = 100%, 0.5F = 50%, 0.0F = 0%")
-    public float flask_dirty_thirst_chance = 0.75F;
+	@ConfigEntry.Category("consumable_settings")
+	public boolean enableAutoInferredHydrationValues = true;
 
-    @Comment("Counted in ticks, 20 ticks = 1 second")
-    public int flask_dirty_thirst_duration = 500;
+	@ConfigEntry.Category("consumable_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int drinksWeakHydrationValue = 2;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int water_souce_quench = 1;
+	@ConfigEntry.Category("consumable_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int drinksRegularHydrationValue = 4;
 
-    @Comment("1.0F = 100%, 0.5F = 50%, 0.0F = 0%")
-    public float water_sip_thirst_chance = 0.75F;
+	@ConfigEntry.Category("consumable_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int drinksStrongHydrationValue = 8;
 
-    @Comment("Counted in ticks, 20 ticks = 1 second")
-    public int water_sip_thirst_duration = 600;
+	@ConfigEntry.Category("consumable_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int foodWeakHydrationValue = 1;
 
-    @Comment("Applies to all water blocks, including flowing water")
-    public boolean allow_non_flowing_water_sip = false;
+	@ConfigEntry.Category("consumable_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int foodRegularHydrationValue = 2;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int sleep_thirst_consumption = 4;
+	@ConfigEntry.Category("consumable_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int foodStrongHydrationValue = 4;
 
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 20)
-    public int sleep_hunger_consumption = 2;
+	// Sleep
 
-    @Comment("boiling time in ticks")
-    public int water_boiling_time = 160;
+	@ConfigEntry.Category("sleep_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int dehydrationAfterSleeping = 4;
 
-    @Comment("pump cooldown in ticks 0 = no cooldown")
-    public int pump_cooldown = 1200;
+	@ConfigEntry.Category("sleep_settings")
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 20)
+	public int hungerWhenSleeping = 2;
 
-    @Comment("Pump requires water below 10 blocks within 50 blocks")
-    public boolean pump_requires_water = false;
+	// Production
 
-    @Comment("Bottle consumes source block")
-    public boolean bottle_consumes_source_block = false;
+	@ConfigEntry.Category("production_settings")
+	@Comment("Defines the time in ticks it takes to boil water in a cauldron.")
+	public int waterBoilingTime = 160;
 
-    @Comment("Haste and fatique on low hydration")
-    public boolean special_effects = false;
+	@ConfigEntry.Category("production_settings")
+	@Comment("Defines the time in ticks before a pump can produce water again.")
+	public int pumpCooldown = 1200;
 
-    @Comment("Applies to all ultrawarm dimensions")
-    public boolean harder_nether = false;
+	@ConfigEntry.Category("production_settings")
+	@Comment("Defines if a pump requires a water source between 10-50 blocks underground to produce water.")
+	public boolean pumpRequiresUndergroundWaterSource = false;
 
-    @Comment("1.3 = 30% more thirst")
-    public float nether_factor = 1.3F;
+	@ConfigEntry.Category("production_settings")
+	@Comment("Defines if filling a bottle consumes the water source block.")
+	public boolean fillingBottleConsumesWaterSource = false;
 
-    @ConfigEntry.Category("advanced_settings")
+	// Advanced
 
-    @Comment("Enables alternate textures by the lead texture artist")
-    public boolean other_droplet_texture = false;
+	@ConfigEntry.Category("advanced_settings")
+	@Comment("Enables alternate textures by the lead texture artist (original mod setting).")
+	public boolean useAlternateHUDTextures = false;
 
-    @ConfigEntry.Category("advanced_settings")
-    public int hud_x = 0;
+	@ConfigEntry.Category("advanced_settings")
+	@Comment("Defines the horizontal offset to render the hydration HUD above the hotbar.")
+	public int horizontalHUDOffset = 0;
 
-    @ConfigEntry.Category("advanced_settings")
-    public int hud_y = 0;
+	@ConfigEntry.Category("advanced_settings")
+	@Comment("Defines the vertical offset to render the hydration HUD above the hotbar.")
+	public int verticalHUDOffset = 0;
 
-    @ConfigEntry.Category("advanced_settings")
-    public boolean thirst_preview = true;
+	@ConfigEntry.Category("advanced_settings")
+	@Comment("Defines if the hydration HUD should show how much hydration would be gained when holding a usable item.")
+	public boolean previewHydrationWhenHoldingItem = true;
 
-    @ConfigEntry.Category("advanced_settings")
-    public boolean tooltip_thirst = true;
+	@ConfigEntry.Category("advanced_settings")
+	@Comment("Defines if an item's hydration value should be rendered in the item tooltip. Disable when using other mods that display hydration values (e.g. Saint's Consumable Tooltips).")
+	public boolean renderHydrationValueInItemTooltip = true;
 }

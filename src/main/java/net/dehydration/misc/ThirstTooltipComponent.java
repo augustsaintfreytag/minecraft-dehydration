@@ -1,6 +1,6 @@
 package net.dehydration.misc;
 
-import net.dehydration.init.RenderInit;
+import net.dehydration.mod.ModRendering;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
@@ -39,8 +39,8 @@ public class ThirstTooltipComponent implements TooltipComponent {
 
 		if (thirstQuench > 20) {
 			// Draw only single full thirst element.
-			context.drawTexture(RenderInit.THIRST_ICON, x, y, 0, 0, 9, 9, 256, 256); // Background
-			context.drawTexture(RenderInit.THIRST_ICON, x, y, this.quality * 18, 9, 9, 9, 256, 256);
+			context.drawTexture(ModRendering.THIRST_ICON, x, y, 0, 0, 9, 9, 256, 256); // Background
+			context.drawTexture(ModRendering.THIRST_ICON, x, y, this.quality * 18, 9, 9, 9, 256, 256);
 
 			// Draw "x10" multiplier indicator after element.
 			var thirstQuenchValue = (int) Math.ceil(Math.abs(thirstQuench) / 2f);
@@ -61,14 +61,15 @@ public class ThirstTooltipComponent implements TooltipComponent {
 			var elementX = x + i * 9 - 1;
 			var elementY = y;
 
-			context.drawTexture(RenderInit.THIRST_ICON, elementX, elementY, 0, 0, 9, 9, 256, 256); // Background
-			context.drawTexture(RenderInit.THIRST_ICON, elementX, elementY, this.quality * 18, 9, 9, 9, 256, 256);
+			context.drawTexture(ModRendering.THIRST_ICON, elementX, elementY, 0, 0, 9, 9, 256, 256); // Background
+			context.drawTexture(ModRendering.THIRST_ICON, elementX, elementY, this.quality * 18, 9, 9, 9, 256, 256);
 		}
 
 		// Draw single half thirst element
 		if (thirstQuench % 2 != 0) {
-			context.drawTexture(RenderInit.THIRST_ICON, x + thirstQuench / 2 * 9 - 1, y, 0, 0, 9, 9, 256, 256); // Background
-			context.drawTexture(RenderInit.THIRST_ICON, x + thirstQuench / 2 * 9 - 1, y, this.quality * 18 + 9, 9, 9, 9,
+			context.drawTexture(ModRendering.THIRST_ICON, x + thirstQuench / 2 * 9 - 1, y, 0, 0, 9, 9, 256, 256); // Background
+			context.drawTexture(ModRendering.THIRST_ICON, x + thirstQuench / 2 * 9 - 1, y, this.quality * 18 + 9, 9, 9,
+					9,
 					256, 256);
 		}
 	}
