@@ -82,7 +82,7 @@ public class HydrationUtil {
 
 		// Regular Drinks
 
-		if (itemHasDrinkUseAction && matchesAny(key, "tea", "coffee")
+		if (itemHasDrinkUseAction && matchesAny(key, "water", "tea", "coffee")
 				&& !matchesAny(key, "tea_leaves", "coffee_beans", "cake")) {
 			return ModConfig.CONFIG.drinksRegularHydrationValue;
 		}
