@@ -9,26 +9,17 @@ import net.fabricmc.loader.api.FabricLoader;
 public class ModCompat {
 
 	public static void init() {
-		ifLoaded("croptopia", CroptopiaCompat::init);
+		var loader = FabricLoader.getInstance();
 
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+		if (loader.isModLoaded("croptopia")) {
+			CroptopiaCompat.init();
+		}
+
+		if (loader.getEnvironmentType() == EnvType.CLIENT && loader.isModLoaded("autohud")) {
 			ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
 				AutoHudCompat.init();
 			});
 		}
-
-		// ClientTickEvents.START_WORLD_TICK.register(world -> {
-		// AutoHudCompat.init();
-		// });
 	}
 
-	private static void ifLoaded(String mod, Action action) {
-		if (FabricLoader.getInstance().isModLoaded(mod))
-			action.act();
-	}
-
-	@FunctionalInterface
-	private interface Action {
-		void act();
-	}
 }
