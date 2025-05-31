@@ -22,10 +22,17 @@ public class DehydrationMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+		var loader = FabricLoader.getInstance();
+
 		// Disable Dehydration -> Origins compatibility if Origins is not loaded
-		if (!FabricLoader.getInstance().isModLoaded("origins")
+		if (!loader.isModLoaded("origins")
 				&& (mixinClassName.equals("net.dehydration.mixin.compat.OriginCommandMixin")
 						|| mixinClassName.equals("net.dehydration.mixin.compat.PlayerOriginComponentMixin"))) {
+			return false;
+		}
+
+		if (!loader.isModLoaded("autohud")
+				&& (mixinClassName.equals("compat.autohud.AutoHudDehydrationCompatMixin"))) {
 			return false;
 		}
 

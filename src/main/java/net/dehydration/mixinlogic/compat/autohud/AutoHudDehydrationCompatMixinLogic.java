@@ -1,58 +1,36 @@
 package net.dehydration.mixinlogic.compat.autohud;
 
+import java.util.Objects;
+
+import mod.crend.autohud.AutoHud;
 import mod.crend.autohud.compat.DehydrationCompat;
 import mod.crend.autohud.component.Component;
+import mod.crend.autohud.component.Components;
 import mod.crend.autohud.component.state.PolicyComponentState;
-import net.dehydration.Mod;
+import mod.crend.autohud.render.ComponentRenderer;
 import net.dehydration.access.HydrationManagerAccess;
-import net.dehydration.hydration.HydrationManager;
-import net.dehydration.mod.ModEffects;
-import net.minecraft.client.network.ClientPlayerEntity;
 
 public interface AutoHudDehydrationCompatMixinLogic {
 
-	public default void mixinInit(ClientPlayerEntity player) {
-		if (Component.getComponents().contains(DehydrationCompat.Thirst)) {
-			Mod.LOGGER.info("Thirst component already registered with AutoHUD, skipping.");
-			return;
-		}
+	static void mixinStatic() {
+		// Overwrite the static block's behavior
+		DehydrationCompat.Thirst = Component.builder("dehydration", "thirst")
+				.config(AutoHud.config.hunger())
+				.stackComponents(new Component[] { Components.Air })
+				.inMainHud()
+				.state((player) -> {
+					var hydrationManager = ((HydrationManagerAccess) player).getHydrationManager();
 
-		Mod.LOGGER.info("Registering thirst component with AutoHUD.");
+					if (hydrationManager.hasThirst()) {
+						Component thirstComponent = DehydrationCompat.Thirst;
+						Objects.requireNonNull(hydrationManager);
 
-		Component.registerComponent(DehydrationCompat.Thirst);
-		Component.Hunger.addStackComponent(DehydrationCompat.Thirst);
-
-		HydrationManager hydrationManager = ((HydrationManagerAccess) player).getHydrationManager();
-
-		if (hydrationManager.hasThirst()) {
-			DehydrationCompat.Thirst.state = new PolicyComponentState(DehydrationCompat.Thirst,
-					hydrationManager::getHydrationLevel, 20);
-		}
-
-		DehydrationCompat.Thirst.hideNow();
-	}
-
-	public default void mixinTickState(ClientPlayerEntity player) {
-		if (DehydrationCompat.Thirst == null) {
-			return;
-		}
-
-		if (player.hasStatusEffect(ModEffects.THIRST)) {
-			DehydrationCompat.Thirst.reveal();
-			return;
-		}
-
-		var hydrationManager = ((HydrationManagerAccess) player).getHydrationManager();
-
-		var mainHandStack = player.getMainHandStack();
-		var offHandStack = player.getOffHandStack();
-
-		var playerHasEmptyHands = mainHandStack.isEmpty() && offHandStack.isEmpty();
-		var playerHeldItemHasTooltip = !playerHasEmptyHands && (mainHandStack.getTooltipData().isPresent()
-				|| offHandStack.getTooltipData().isPresent());
-
-		if (hydrationManager.isNotFull() && playerHeldItemHasTooltip) {
-			DehydrationCompat.Thirst.reveal();
-		}
+						return new PolicyComponentState(thirstComponent, hydrationManager::getHydrationLevel, 20);
+					} else {
+						return null;
+					}
+				}).build();
+		DehydrationCompat.THIRST_WRAPPER = ComponentRenderer.of(DehydrationCompat.Thirst);
+		AutoHud.addApi(new DehydrationCompat());
 	}
 }
