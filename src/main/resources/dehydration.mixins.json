@@ -6,6 +6,7 @@
   "plugin": "net.dehydration.ModMixinPlugin",
   "mixins": [
 	"compat.autohud.AutoHudDehydrationCompatMixin",
+	"compat.farmersdelight.FarmersDelightConsumableItemMixin",
 	"MilkBucketItemMixin",
     "accessor.CampfireBlockEntityAccessor",
     "BootstrapMixin",
