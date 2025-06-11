@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import net.dehydration.access.HydrationManagerAccess;
 import net.dehydration.item.LeatherFlask;
-import net.dehydration.item.WaterBowlItem;
 import net.dehydration.misc.PotionItemUtil;
 import net.dehydration.mod.ModConfig;
 import net.dehydration.mod.ModEffects;
@@ -128,7 +127,6 @@ public class HydrationUtil {
 
 	private static boolean isModItemStack(ItemStack stack) {
 		return stack.getItem() instanceof LeatherFlask
-				|| stack.getItem() instanceof WaterBowlItem
 				|| stack.getItem() instanceof PotionItem;
 	}
 
@@ -141,10 +139,6 @@ public class HydrationUtil {
 			}
 
 			return ModConfig.CONFIG.flaskHydrationValue;
-		}
-
-		if (item instanceof WaterBowlItem) {
-			return ModConfig.CONFIG.drinksRegularHydrationValue;
 		}
 
 		if (item instanceof PotionItem && !(item instanceof SplashPotionItem)) {
@@ -161,11 +155,6 @@ public class HydrationUtil {
 
 		if (item instanceof LeatherFlask) {
 			return LeatherFlask.isFlaskContaminated(stack);
-		}
-
-		if (item instanceof WaterBowlItem) {
-			var waterBowlItem = (WaterBowlItem) item;
-			return waterBowlItem.isContaminated;
 		}
 
 		if (item instanceof PotionItem && !(item instanceof SplashPotionItem)) {
