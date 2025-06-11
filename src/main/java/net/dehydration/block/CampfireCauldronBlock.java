@@ -268,9 +268,16 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
 	@Environment(EnvType.CLIENT)
 	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
 		if (random.nextInt(12) == 0 && this.isFireBurning(world, pos) && (Integer) state.get(LEVEL) > 0) {
+			var pitch = random.nextFloat() * 0.3F + 0.5F;
+			var isPurified = this.isPurifiedWater(world, pos);
+
+			if (isPurified) {
+				pitch += 0.35F;
+			}
+
 			world.playSound((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D,
 					ModSounds.CAULDRON_BUBBLE_EVENT, SoundCategory.BLOCKS, 0.5F,
-					random.nextFloat() * 0.4F + 0.8F, false);
+					pitch, false);
 		}
 	}
 
