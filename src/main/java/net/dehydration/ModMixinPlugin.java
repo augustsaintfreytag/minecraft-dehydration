@@ -1,4 +1,4 @@
-package net.dehydration.mixin.compat;
+package net.dehydration;
 
 import java.util.List;
 import java.util.Set;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import net.fabricmc.loader.api.FabricLoader;
 
-public class DehydrationMixinPlugin implements IMixinConfigPlugin {
+public class ModMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public void onLoad(String mixinPackage) {
@@ -33,6 +33,11 @@ public class DehydrationMixinPlugin implements IMixinConfigPlugin {
 
 		if (!loader.isModLoaded("autohud")
 				&& (mixinClassName.equals("compat.autohud.AutoHudDehydrationCompatMixin"))) {
+			return false;
+		}
+
+		if (!loader.isModLoaded("farmersdelight")
+				&& (mixinClassName.equals("compat.farmersdelight.FarmersDelightConsumableItemMixin"))) {
 			return false;
 		}
 
