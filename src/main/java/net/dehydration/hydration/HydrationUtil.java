@@ -134,6 +134,7 @@ public class HydrationUtil {
 		var item = stack.getItem();
 
 		if (item instanceof LeatherFlask) {
+			// Check if flask is empty, return no hydration value if not filled.
 			if (LeatherFlask.isFlaskEmpty(stack)) {
 				return 0;
 			}
@@ -142,7 +143,13 @@ public class HydrationUtil {
 		}
 
 		if (item instanceof PotionItem && !(item instanceof SplashPotionItem)) {
-			return ModConfig.CONFIG.drinksWeakHydrationValue;
+			if (PotionItemUtil.isContaminatedPotionItemStack(stack)) {
+				// Return weak hydration value for contaminated potions.
+				return ModConfig.CONFIG.drinksWeakHydrationValue;
+			}
+
+			// Return regular hydration value for non-contaminated potions.
+			return ModConfig.CONFIG.drinksRegularHydrationValue;
 		}
 
 		return 0;
