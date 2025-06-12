@@ -59,11 +59,9 @@ public abstract class PotionItemMixin extends Item {
 			return;
 		}
 
-		if (world.isClient() || !PotionItemUtil.isContaminatedPotionItemStack(stack)) {
-			return;
+		if (!world.isClient() && PotionItemUtil.isContaminatedPotionItemStack(stack)) {
+			HydrationUtil.addDefaultThirstEffectToPlayer(player);
 		}
-
-		HydrationUtil.addDefaultThirstEffectToPlayer(player);
 	}
 
 	@Override
